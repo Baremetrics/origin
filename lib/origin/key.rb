@@ -54,6 +54,22 @@ module Origin
         name, strategy, operator, expanded, block
     end
 
+    @@symbol_operator_mapping = {}
+    def self.convert_symbol_decoration_if_needed(object)
+      return object unless object.is_a?(::Symbol::Decoration)
+      
+      name, operator = object.symbol, object.decorator
+      op_def = @@symbol_operator_mapping[operator]
+      raise NotImplementedError.new("#{name} is not a Mongoid recognized operator") unless op_def
+      strategy, operator, additional, block = op_def
+      method = "__#{strategy}__".to_sym
+      return Key.new(name, method, operator, additional, &block)
+    end
+
+    def self.register_symbol_operator(name, strategy, operator, additional, &block)
+      @@symbol_operator_mapping[name] = [strategy, operator, additional, block]
+    end
+
     # Gets the raw selector that would be passed to Mongo from this key.
     #
     # @example Specify the raw selector.

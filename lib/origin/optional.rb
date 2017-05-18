@@ -170,6 +170,7 @@ module Origin
     def order_by(*spec)
       option(spec) do |options, query|
         spec.compact.each do |criterion|
+          criterion = Key.convert_symbol_decoration_if_needed(criterion)
           criterion.__sort_option__.each_pair do |field, direction|
             add_sort_option(options, field, direction)
           end

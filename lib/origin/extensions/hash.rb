@@ -146,6 +146,7 @@ module Origin
       def __expand_complex__
         replacement = {}
         each_pair do |key, value|
+          key = Key.convert_symbol_decoration_if_needed(key)
           replacement.merge!(key.__expr_part__(value.__expand_complex__))
         end
         replacement

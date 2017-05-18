@@ -1,3 +1,5 @@
+require 'symbol_decoration'
+
 # encoding: utf-8
 module Origin
   module Extensions
@@ -46,10 +48,8 @@ module Origin
         #
         # @since 1.0.0
         def add_key(name, strategy, operator, additional = nil, &block)
-          define_method(name) do
-            method = "__#{strategy}__".to_sym
-            Key.new(self, method, operator, additional, &block)
-          end
+          ::Symbol::Decoration.register(name)
+          Key.register_symbol_operator(name, strategy, operator, additional, &block)
         end
 
         # Evolves the symbol into a MongoDB friendly value - in this case
